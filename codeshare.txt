@@ -73,14 +73,20 @@ for i in range(1):  #30
                     ,"publishedDepartureUtc"\
                     ,"publishedArrivalUtc"\
                     ,"actualRunwayDepartureUtc"\
-                    ,"actualRunwayArrivalUtc")        
-        if (enterOnce == 0):
-            parseList.createOrReplaceTempView("monthTable")
-            enterOnce = 1
-            spark.sql("truncate table monthTable")  # to clear table   
-        parseList.createOrReplaceTempView("tempTable")
-        #spark.sql("select * from tempTable")        
-        spark.sql("INSERT INTO monthTable TABLE tempTable")
-        #parseDf.write.save(path="arr_flight2010_jan.json",format="json", mode="append")
-        #parseDf.write.json(monthfile, mode="append")            
+                    ,"actualRunwayArrivalUtc") 
+	# write to incremental parquet file
+	parseList.write \
+	.mode("append") \
+	.parquet("dep_flights2010_jan.parquet")       
+        
+#	if (enterOnce == 0):
+#            parseList.createOrReplaceTempView("monthTable")
+#            enterOnce = 1
+#            spark.sql("truncate table monthTable")  # to clear table   
+#        parseList.createOrReplaceTempView("tempTable")
+#        #spark.sql("select * from tempTable")        
+#        spark.sql("INSERT INTO monthTable TABLE tempTable")
+#        #parseList.write.save(path="arr_flight2010_jan.json",format="json", mode="append")
+#	#parseList.write.partitionBy("key1", "key2").parquet("dep_flight2010_jan.parquet")
+#        #parseDf.write.json(monthfile, mode="append")            
 #open("arr_flight2010_jan.json").close()    
