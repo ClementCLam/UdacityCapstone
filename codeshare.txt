@@ -1,0 +1,86 @@
+"""
+import all necessary python libraries
+"""
+from pyspark.sql import SparkSession
+import requests
+from pyspark.sql.functions import explode, split
+from pyspark.sql.functions import udf, desc,asc,sum as Fsum
+from pyspark.sql.types import StringType, IntegerType
+import datetime
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+"""
+Set up a SparkSession in local mode to process datasets in a data lake
+"""
+spark = SparkSession \
+    .builder \
+    .appName("FlightStats from Cirium by airport") \
+    .config('spark.ui.port',3000) \
+    .getOrCreate()
+#spark.sparkContext.getConf().getAll()  # check sparksession full info
+
+params = {
+    'appId': 'e****75',
+    'appKey': '47652f4724*********',
+    'utc': 'false',
+    'numHours': '6',  # max 
+    'maxFlights': '500', #69
+}
+monthfile="/arr_flight2010_jan.json"
+enterOnce=0
+for i in range(1):  #30
+    for j in range(1): #4
+        api='2010/01/{}/{}'.format(i+1,j*6)
+        rest_api = 'https://api.flightstats.com/flex/flightstatus/historical/rest/v3/json/airport/status/MEL/dep/'+api
+        response = requests.get(rest_api, params=params)
+        jsondata = response.text
+        open('data.json', 'w').write(jsondata)
+        Df = spark.read.format("json")\
+            .option("inferSchema","true")\
+            .option("multiLine","true")\
+            .option("header","true")\
+            .load("data.json")
+        #Df.show()  
+        Df = Df.withColumn("flights",explode("flightStatuses")) # open an array
+        Df2 =Df.withColumn("flightId", Df["flights"].getItem("flightId"))\
+            .withColumn("carrierFsCode",Df["flights"].getItem("carrierFsCode"))\
+            .withColumn("flightNumber", Df["flights"].getItem("flightNumber"))\
+            .withColumn("departureAirportFsCode", Df["flights"].getItem("departureAirportFsCode"))\
+            .withColumn("arrivalAirportFsCode", Df["flights"].getItem("arrivalAirportFsCode"))\
+            .withColumn("departureDate", Df["flights"].getItem("departureDate"))\
+            .withColumn("arrivalDate", Df["flights"].getItem("arrivalDate"))\
+            .withColumn("operationalTimes", Df["flights"].getItem("operationalTimes"))
+        Df3 = Df2.withColumn("departureDateUtc", Df2["departureDate"].getItem("dateUtc"))\
+            .withColumn("arrivalDateUtc", Df2["arrivalDate"].getItem("dateUtc"))\
+            .withColumn("publishedDeparture", Df2["operationalTimes"].getItem("publishedDeparture"))\
+            .withColumn("publishedArrival", Df2["operationalTimes"].getItem("publishedArrival"))\
+            .withColumn("actualRunwayDeparture", Df2["operationalTimes"].getItem("actualRunwayDeparture"))\
+            .withColumn("actualRunwayArrival", Df2["operationalTimes"].getItem("actualRunwayArrival"))
+        Df4 = Df3.withColumn("publishedDepartureUtc", Df3["publishedDeparture"].getItem("dateUtc"))\
+            .withColumn("publishedArrivalUtc", Df3["publishedArrival"].getItem("dateUtc"))\
+            .withColumn("actualRunwayDepartureUtc", Df3["actualRunwayDeparture"].getItem("dateUtc"))\
+            .withColumn("actualRunwayArrivalUtc", Df3["actualRunwayArrival"].getItem("dateUtc"))
+        # select a list to be included in a new dataframe   
+        parseList = Df4.select("flightId"\
+                    ,"carrierFsCode"\
+                    ,"flightNumber"\
+                    ,"departureAirportFsCode"\
+                    ,"arrivalAirportFsCode"\
+                    ,"departureDateUtc"\
+                    ,"arrivalDateUtc"\
+                    ,"publishedDepartureUtc"\
+                    ,"publishedArrivalUtc"\
+                    ,"actualRunwayDepartureUtc"\
+                    ,"actualRunwayArrivalUtc")        
+        if (enterOnce == 0):
+            parseList.createOrReplaceTempView("monthTable")
+            enterOnce = 1
+            spark.sql("truncate table monthTable")  # to clear table   
+        parseList.createOrReplaceTempView("tempTable")
+        #spark.sql("select * from tempTable")        
+        spark.sql("INSERT INTO monthTable TABLE tempTable")
+        #parseDf.write.save(path="arr_flight2010_jan.json",format="json", mode="append")
+        #parseDf.write.json(monthfile, mode="append")            
+#open("arr_flight2010_jan.json").close()    
