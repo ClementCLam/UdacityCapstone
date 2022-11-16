@@ -28,7 +28,7 @@ params = {
     'numHours': '6',  # max 
     'maxFlights': '500', #69
 }
-monthfile="/arr_flight2010_jan.json"
+#monthfile="/arr_flight2010_jan.json"
 for y in range(11): # 10 years
 for m in range (13): # 12 months 
 for d in range(29):  # 28 days
@@ -78,7 +78,7 @@ for d in range(29):  # 28 days
 	# write to incremental parquet file
 	parseList.write \
 	.mode("append") \
-	.parquet("dep_flights2010_jan.parquet")       
+	.parquet("dep_flights.parquet")       
         
 #	if (enterOnce == 0):
 #            parseList.createOrReplaceTempView("monthTable")
