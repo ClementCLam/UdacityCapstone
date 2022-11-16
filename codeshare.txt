@@ -29,10 +29,11 @@ params = {
     'maxFlights': '500', #69
 }
 monthfile="/arr_flight2010_jan.json"
-enterOnce=0
-for i in range(1):  #30
-    for j in range(1): #4
-        api='2010/01/{}/{}'.format(i+1,j*6)
+for y in range(11): # 10 years
+for m in range (13): # 12 months 
+for d in range(29):  # 28 days
+    for h in range(4): # 4 (every 6 hour)
+        api='20{}/{}/{}/{}'.format(10+y,m+1,d+1,h*6)
         rest_api = 'https://api.flightstats.com/flex/flightstatus/historical/rest/v3/json/airport/status/MEL/dep/'+api
         response = requests.get(rest_api, params=params)
         jsondata = response.text
