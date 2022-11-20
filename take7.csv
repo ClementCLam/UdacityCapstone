@@ -1,0 +1,60 @@
+Australian Bureau of Statistics
+
+"2011 Census - Counting Persons, Place of Usual Residence"
+"SEXP Sex by STATE by RELP - 1 Digit Level"
+"Counting: Persons, Place of Usual Residence"
+
+Filters:
+"Default Summation","Persons, Place of Usual Residence"
+
+" Male"
+"RELP - 1 Digit Level","Buddhism","Christianity","Hinduism","Islam","Judaism","Other Religions","No Religion","Supplementary codes","Not stated","Total",
+"STATE",
+"New South Wales",90595,2120512,63544,113943,19106,25896,662712,29997,282578,3408880,
+"Victoria",77988,1446015,45880,79646,21820,26731,673671,28996,231871,2632617,
+"Queensland",29113,1321620,15207,18083,2236,13286,512944,22221,213526,2148221,
+"South Australia",13307,425836,7354,10590,531,6901,238775,8930,74985,787217,
+"Western Australia",21528,618628,11566,20611,2856,7904,308981,12986,121111,1126175,
+"Tasmania",1593,137684,811,931,109,966,74780,2602,23198,242675,
+"Northern Territory",1638,57784,922,870,72,1962,27507,1269,17490,109519,
+"Australian Capital Territory",4233,92408,3174,3973,330,1326,54546,2424,14327,176747,
+"Other Territories",197,325,8,378,3,22,198,9,832,1967,
+"Total",240186,6220824,148462,249024,47062,84997,2554107,109442,979922,10634012,
+
+
+" Female"
+"RELP - 1 Digit Level","Buddhism","Christianity","Hinduism","Islam","Judaism","Other Religions","No Religion","Supplementary codes","Not stated","Total",
+"STATE",
+"New South Wales",110439,2341836,56256,105438,20626,26034,577821,18435,251890,3508782,
+"Victoria",90651,1631934,37258,73125,23331,23210,610210,17211,214499,2721423,
+"Queensland",36832,1463463,13433,15965,2209,13977,442841,13719,182079,2184520,
+"South Australia",15681,488521,6265,8921,559,6889,209747,4996,67765,809351,
+"Western Australia",25863,681739,9457,18505,2998,8432,262964,7055,95973,1112991,
+"Tasmania",2011,157713,804,780,138,1238,67093,1501,21405,252677,
+"Northern Territory",2050,59754,716,722,72,1938,23133,685,13350,102428,
+"Australian Capital Territory",5103,104612,2873,3457,341,1449,48704,1245,12696,180477,
+"Other Territories",161,273,7,354,0,36,155,6,78,1061,
+"Total",288792,6929853,127073,227269,50273,83197,2242677,64842,859728,10873706,
+
+
+" Total"
+"RELP - 1 Digit Level","Buddhism","Christianity","Hinduism","Islam","Judaism","Other Religions","No Religion","Supplementary codes","Not stated","Total",
+"STATE",
+"New South Wales",201032,4462354,119803,219378,39729,51936,1240533,48428,534470,6917656,
+"Victoria",168637,3077946,83137,152779,45149,49938,1283883,46205,446369,5354039,
+"Queensland",65939,2785082,28641,34048,4441,27262,955784,35938,395603,4332737,
+"South Australia",28996,914360,13618,19511,1088,13792,448526,13927,142756,1596569,
+"Western Australia",47396,1300375,21026,39116,5853,16329,571949,20038,217080,2239171,
+"Tasmania",3598,295400,1620,1708,248,2201,141871,4103,44601,495351,
+"Northern Territory",3686,117544,1638,1587,146,3904,50639,1958,30840,211943,
+"Australian Capital Territory",9336,197019,6040,7434,675,2774,103248,3666,27027,357218,
+"Other Territories",353,598,7,729,4,57,354,19,911,3029,
+"Total",528978,13150671,275535,476290,97336,168196,4796786,174281,1839649,21507719,
+
+"Dataset: Census of Population and Housing, 2011, TableBuilder"
+
+"INFO","Cells in this table have been randomly adjusted to avoid the release of confidential data. No reliance should be placed on small cells."
+
+
+"Copyright Commonwealth of Australia, 2021, see abs.gov.au/copyright"
+"ABS data licensed under Creative Commons, see abs.gov.au/ccby"
