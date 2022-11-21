@@ -1,0 +1,47 @@
+"""
+import all necessary python libraries
+"""
+from pyspark.sql import SparkSession
+import requests
+from pyspark.sql.functions import explode, split
+from pyspark.sql.functions import udf, desc,asc,sum as Fsum
+from pyspark.sql.types import StringType, IntegerType, ArrayType,StructField, StructType
+import datetime
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+"""
+Set up a SparkSession in local mode to process datasets in a data lake
+"""
+spark = SparkSession \
+    .builder \
+    .appName("Census 2016 Religion affiliations survey") \
+    .config('spark.ui.port',3000) \
+    .getOrCreate()
+#spark.sparkContext.getConf().getAll()  # check sparksession full info
+
+columns = StructType([
+  StructField("POA", ArrayType(
+      StructType([
+      StructField("Postcode",IntegerType(), True),
+      StructField("State",StringType(), True)
+      ]))),
+  StructField("homeCountry", StringType(), True),
+  StructField("Buddhism", IntegerType(), True),    
+  StructField("Christianity", IntegerType(), True), 
+  StructField("Hinduism", IntegerType(), True), 
+  StructField("Islam", IntegerType(), True), 
+  StructField("Judaism", IntegerType(), True),
+  StructField("Total", IntegerType(), True)    
+])
+
+Dff = spark.read\
+    .schema(columns)\
+    .option("mode","DROPMALFORMED")\
+    .csv("sample1.csv")
+#Dff.show(10,truncate=False)
+#pd.set_option('max_colwidth',200)
+#Dff.head(10)
+Dff.limit(15).toPandas()
+

@@ -1,0 +1,31 @@
+Australian	Bureau	of	Statistics		
+					
+2016 Census - Counting Persons, Place of Usual Residence (MB)					
+POA (UR), BPLP - 4 Digit Level and SEXP Sex by RELP - 1 Digit Level					
+Counting: Persons Place of Usual Residence					
+					
+Filters:					
+Default Summation	Persons Place of Usual Residence				
+					
+		RELP - 1 Digit Level	Buddhism	Christianity	Total
+POA (UR)	BPLP - 4 Digit Level	SEXP Sex			
+3990, VIC	Hong Kong (SAR of China)	Male	1	0	1
+		Female	1	2	3
+	Germany	Male	3	0	3
+		Female	0	3	3
+3662, VIC	Hong Kong (SAR of China)	Male	0	0	0
+		Female	1	0	1
+	Germany	Male	0	2	2
+		Female	2	0	2
+					
+					
+					
+					
+					
+Dataset: Census of Population and Housing, 2016, TableBuilder					
+					
+INFO	Cells in this table have been randomly adjusted to avoid the release of confidential data. No reliance should be placed on small cells.				
+					
+					
+Copyright Commonwealth of Australia, 2021, see abs.gov.au/copyright					
+ABS data licensed under Creative Commons, see abs.gov.au/ccby					
