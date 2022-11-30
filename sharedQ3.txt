@@ -1,0 +1,104 @@
+################################
+# import all dependent libraries
+################################
+from pyspark.sql import SparkSession
+from pyspark.sql import functions as F
+import requests
+from pyspark.sql.functions import explode, split, col, first
+import time
+from pyspark.sql.functions import udf, desc,asc,sum as Fsum
+from pyspark.sql.types import (StringType, IntegerType, 
+                               ArrayType,StructField, StructType)
+import datetime
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+# agg() functions
+from pyspark.sql.functions import (last,  first, max as Fmax,
+                                   count, countDistinct,
+                                   sum as Fsum,sumDistinct,
+                                   collect_list)
+from pyspark.sql.window import Window
+from pyspark.sql.functions import row_number
+
+########################################################################
+# Set up a SparkSession in local mode to process datasets in a data lake
+########################################################################
+spark = SparkSession \
+    .builder \
+    .appName("ABS Census 2016 Data Analytics") \
+    .config('spark.ui.port',3000) \
+    .getOrCreate()
+#spark.sparkContext.getConf().getAll()  # check sparksession full info
+
+columns = StructType([
+  StructField("abs_datasets", StringType(), True),
+  StructField("POA", StringType(), True),
+  StructField("birthCountry", StringType(), True),    
+  StructField("sex", StringType(), True), 
+  StructField("religion", StringType(), True), 
+  StructField("count", IntegerType(), True)    
+])
+
+Dff = spark.read\
+    .schema(columns)\
+    .option("mode","DROPMALFORMED")\
+    .csv("religion_MFbirthACTpc.csv")
+
+Dff=Dff.withColumn("postcode",split(col("POA"),",").getItem(0))\
+        .withColumn("state",split(col("POA"),",").getItem(1))\
+        .drop("POA","abs_datasets").dropna()
+Dff=Dff.filter(col("count") != 0)
+
+
+# Approach#1 ####################################################################
+windowSpec = Window.partitionBy("religion").orderBy(desc("count"))
+Dff=Dff.groupBy("religion","sex").count()
+Dff.withColumn("row_number",row_number().over(windowSpec))
+
+BM=Dff.filter((col("religion")=="Buddhism") & (col("sex")=="Male"))
+BF=Dff.filter((col("religion")=="Buddhism") & (col("sex")=="Female"))
+CM=Dff.filter((col("religion")=="Christianity") & (col("sex")=="Male"))
+CF=Dff.filter((col("religion")=="Christianity") & (col("sex")=="Female"))
+IM=Dff.filter((col("religion")=="Islam") & (col("sex")=="Male"))
+IF=Dff.filter((col("religion")=="Islam") & (col("sex")=="Female"))# labels = StructType([\
+labels = StructType([\
+         StructField("religion", StringType(), True),\
+         StructField("male", IntegerType(), True),\
+         StructField("female", IntegerType(), True)
+     ])
+data = [("Buddhism",BM.head()[2],BF.head()[2]),
+        ("Christianity",CM.head()[2],CF.head()[2]),
+        ("Islam",IM.head()[2],IF.head()[2])]
+################################################################################
+
+## Approach#2  ################################################################
+BM=Dff.filter((col("religion")=="Buddhism") & (col("sex")=="Male"))\
+         .groupBy('religion').sum()
+BF=Dff.filter((col("religion")=="Buddhism") & (col("sex")=="Female"))\
+         .groupBy('religion').sum()
+CM=Dff.filter((col("religion")=="Christianity") & (col("sex")=="Male"))\
+         .groupBy('religion').sum()
+CF=Dff.filter((col("religion")=="Christianity") & (col("sex")=="Female"))\
+         .groupBy('religion').sum()
+IM=Dff.filter((col("religion")=="Islam") & (col("sex")=="Male"))\
+         .groupBy('religion').sum()
+IF=Dff.filter((col("religion")=="Islam") & (col("sex")=="Female"))\
+         .groupBy('religion').sum()
+#HM=Dff.filter((col("religion")=="Hinduism") & (col("sex")=="Male"))\
+
+# create a new dataframe in order to plot the result bar graph
+labels = StructType([\
+         StructField("religion", StringType(), True),\
+         StructField("male", IntegerType(), True),\
+         StructField("female", IntegerType(), True)
+     ])
+data = [("Buddhism",BM.head()[1],BF.head()[1]),
+        ("Christianity",CM.head()[1],CF.head()[1]),
+        ("Islam",IM.head()[1],IF.head()[1])]
+###################################################################
+
+HistDF = spark.createDataFrame(data=data, schema=labels)
+
+HistDF_pd = HistDF.toPandas()   
+
